@@ -4,18 +4,29 @@
  * and open the template in the editor.
  */
 package br.com.sistemacomercial.telas;
+import java.sql.*;
+import br.com.sistemacomercial.dal.ModuloConexao;
 
 /**
  *
  * @author jade
  */
 public class TelaLogin extends javax.swing.JFrame {
-
+    Connection conexao= null;
+    PreparedStatement pst = null;
+    ResultSet rs = null;
     /**
      * Creates new form TelaLogin
      */
     public TelaLogin() {
         initComponents();
+        conexao = ModuloConexao.conector();
+        //System.out.println(conexao);
+        if(conexao != null){
+            lblStatus.setText("Conectado");
+        }else{
+            lblStatus.setText("Não Conectado");
+        }
     }
 
     /**
@@ -32,9 +43,11 @@ public class TelaLogin extends javax.swing.JFrame {
         jTextUsuarioLogin = new javax.swing.JTextField();
         btnLogin = new javax.swing.JButton();
         jPasswordLogin = new javax.swing.JPasswordField();
+        lblStatus = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("Sis Comercial - Login");
+        setTitle("Sistema Comercial - Login");
+        setBackground(new java.awt.Color(0, 153, 153));
         setResizable(false);
 
         jLabel1.setText("Usuário:");
@@ -48,6 +61,8 @@ public class TelaLogin extends javax.swing.JFrame {
         });
 
         btnLogin.setText("Login");
+
+        lblStatus.setText("Status");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -68,6 +83,9 @@ public class TelaLogin extends javax.swing.JFrame {
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(btnLogin, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(144, 144, 144))))
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(lblStatus, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -82,10 +100,12 @@ public class TelaLogin extends javax.swing.JFrame {
                     .addComponent(jPasswordLogin, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(btnLogin)
-                .addContainerGap(44, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 20, Short.MAX_VALUE)
+                .addComponent(lblStatus)
+                .addContainerGap())
         );
 
-        pack();
+        setSize(new java.awt.Dimension(429, 222));
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
@@ -134,5 +154,6 @@ public class TelaLogin extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPasswordField jPasswordLogin;
     private javax.swing.JTextField jTextUsuarioLogin;
+    private javax.swing.JLabel lblStatus;
     // End of variables declaration//GEN-END:variables
 }
