@@ -4,6 +4,12 @@
  */
 package br.com.sistemacomercial.telas;
 
+import java.text.DateFormat;
+import static java.time.Clock.system;
+import java.util.Date;
+import javax.swing.JOptionPane;
+
+
 /**
  *
  * @author jade
@@ -46,6 +52,11 @@ public class TelaPrincipal extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Sistemas Comercial");
         setResizable(false);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowActivated(java.awt.event.WindowEvent evt) {
+                formWindowActivated(evt);
+            }
+        });
 
         javax.swing.GroupLayout DesktopLayout = new javax.swing.GroupLayout(Desktop);
         Desktop.setLayout(DesktopLayout);
@@ -107,6 +118,11 @@ public class TelaPrincipal extends javax.swing.JFrame {
 
         MenOpSair.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_4, java.awt.event.InputEvent.ALT_DOWN_MASK));
         MenOpSair.setText("Sair");
+        MenOpSair.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                MenOpSairActionPerformed(evt);
+            }
+        });
         MenOp.add(MenOpSair);
 
         Menu.add(MenOp);
@@ -155,6 +171,20 @@ public class TelaPrincipal extends javax.swing.JFrame {
     private void mencadUsuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mencadUsuActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_mencadUsuActionPerformed
+
+    private void formWindowActivated(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowActivated
+        Date data = new Date();
+        DateFormat formatador = DateFormat.getDateInstance(DateFormat.SHORT);
+        lblDataLogin.setText(formatador.format(data));
+        
+    }//GEN-LAST:event_formWindowActivated
+
+    private void MenOpSairActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MenOpSairActionPerformed
+        int sair = JOptionPane.showConfirmDialog(null, "Tem certeza que deseja Sair?", "Atenção", JOptionPane.YES_NO_OPTION);
+        if(sair == JOptionPane.YES_OPTION){
+            System.exit(0);
+        }
+    }//GEN-LAST:event_MenOpSairActionPerformed
 
     /**
      * @param args the command line arguments
