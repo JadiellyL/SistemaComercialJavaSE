@@ -10,8 +10,8 @@ import java.sql.*;
  */
 public class ModuloConexao {
     public static Connection conector(){
-        java.sql.Connection conexao = null;
-        String driver = "com.mysql.jdbc.Driver";
+        Connection conexao = null;
+        String driver = "com.mysql.cj.jdbc.Driver";
         String url = "jdbc:mysql://localhost:3306/dbsiscomercial";
         String user = "root";
         String password = "Jade@12345";
