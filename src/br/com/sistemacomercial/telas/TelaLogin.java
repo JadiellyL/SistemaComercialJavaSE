@@ -28,10 +28,22 @@ public class TelaLogin extends javax.swing.JFrame {
             rs = pst.executeQuery();
             
             if(rs.next()){
-                TelaPrincipal principal = new TelaPrincipal();
-                principal.setVisible(true);
-                this.dispose();
-                conexao.close();
+                String perfil = rs.getString(6);
+                if(perfil.equals("admin")){
+                    TelaPrincipal principal = new TelaPrincipal();
+                    principal.setVisible(true);
+                    TelaPrincipal.MenRel.setEnabled(true);
+                    TelaPrincipal.MencadUsu.setEnabled(true);
+                    TelaPrincipal.lblUsuarioLogado.setText(rs.getString(4));
+                    this.dispose();
+                }else{
+                    TelaPrincipal principal = new TelaPrincipal();
+                    principal.setVisible(true);
+                    TelaPrincipal.lblUsuarioLogado.setText(rs.getString(4));
+                    this.dispose();
+                }
+                
+                //conexao.close();
             }else{
                 JOptionPane.showMessageDialog(null, "Usuario ou senha inválidos!");
             }
@@ -78,6 +90,7 @@ public class TelaLogin extends javax.swing.JFrame {
 
         jLabel2.setText("Senha:");
 
+        txtUsuarioLogin.setText("admin");
         txtUsuarioLogin.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtUsuarioLoginActionPerformed(evt);
@@ -90,6 +103,8 @@ public class TelaLogin extends javax.swing.JFrame {
                 btnLoginActionPerformed(evt);
             }
         });
+
+        txtSenhaLogin.setText("admin");
 
         lblStatus.setText("Status");
 
