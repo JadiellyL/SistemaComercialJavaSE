@@ -8,13 +8,47 @@ package br.com.sistemacomercial.telas;
  *
  * @author jade
  */
+import java.sql.*;
+import br.com.sistemacomercial.dal.ModuloConexao;
+import javax.swing.JOptionPane;
+
 public class TelaUsuario extends javax.swing.JInternalFrame {
 
+    Connection conexao= null;
+    PreparedStatement pst = null;
+    ResultSet rs = null;
     /**
      * Creates new form TelaUsuario
      */
     public TelaUsuario() {
         initComponents();
+        conexao = ModuloConexao.conector();
+    }
+    
+    private void consultar(){
+        String sql = "select * from tbusuarios where iduser = ?";
+        try {
+            pst = conexao.prepareStatement(sql);
+            pst.setString(1, txtIdUsuario.getText());
+            rs = pst.executeQuery();
+            if (rs.next()) {
+                txtNomeUsuario.setText(rs.getString(2));
+                txtFoneUsuario.setText(rs.getString(3));
+                txtLoginUsuario.setText(rs.getString(4));
+                txtSenhaUsuario.setText(rs.getString(5));
+                cboPerfilUsuario.setSelectedItem(rs.getString(6));
+                
+            } else {
+                JOptionPane.showMessageDialog(null, "Usuario não cadastrado!");
+                txtNomeUsuario.setText(null);
+                txtFoneUsuario.setText(null);
+                txtLoginUsuario.setText(null);
+                txtSenhaUsuario.setText(null);
+                cboPerfilUsuario.setSelectedItem(null);
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e);
+        }
     }
 
     /**
@@ -78,7 +112,7 @@ public class TelaUsuario extends javax.swing.JInternalFrame {
             }
         });
 
-        cboPerfilUsuario.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Admin", "User" }));
+        cboPerfilUsuario.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "admin", "user" }));
 
         jLabel6.setText("Fone:");
 
@@ -97,6 +131,11 @@ public class TelaUsuario extends javax.swing.JInternalFrame {
         jButton4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/sistemacomercial/icones/searchUser.png"))); // NOI18N
         jButton4.setToolTipText("Pesquisar");
         jButton4.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -189,6 +228,10 @@ public class TelaUsuario extends javax.swing.JInternalFrame {
     private void txtSenhaUsuarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtSenhaUsuarioActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtSenhaUsuarioActionPerformed
+
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+        consultar();
+    }//GEN-LAST:event_jButton4ActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
