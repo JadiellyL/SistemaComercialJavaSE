@@ -80,6 +80,37 @@ public class TelaUsuario extends javax.swing.JInternalFrame {
             JOptionPane.showMessageDialog(null, e);
         }
     }
+    
+    public void alterar(){
+        String sql = "update tbusuarios set usuario = ?, fone = ?, login = ?, senha = ?, perfil = ? where iduser = ?";
+        try {
+            pst = conexao.prepareStatement(sql);
+            pst.setString(1, txtNomeUsuario.getText());
+            pst.setString(2, txtFoneUsuario.getText());
+            pst.setString(3, txtLoginUsuario.getText());
+            pst.setString(4, txtSenhaUsuario.getText());
+            pst.setString(5, cboPerfilUsuario.getSelectedItem().toString());
+            pst.setString(6, txtIdUsuario.getText());
+            if ((txtNomeUsuario.getText().isEmpty()) || (txtLoginUsuario.getText().isEmpty()) || (txtSenhaUsuario.getText().isEmpty())) {
+                JOptionPane.showMessageDialog(null, "Preencha os campos obrigatorios");
+            } else {
+
+                int adicionado = pst.executeUpdate();
+
+                if (adicionado > 0) {
+                    JOptionPane.showMessageDialog(null, "Dados alterados com sucesso!");
+                    txtIdUsuario.setText(null);
+                    txtNomeUsuario.setText(null);
+                    txtFoneUsuario.setText(null);
+                    txtLoginUsuario.setText(null);
+                    txtSenhaUsuario.setText(null);
+                }
+            }
+            
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e);
+        }
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -159,6 +190,11 @@ public class TelaUsuario extends javax.swing.JInternalFrame {
         jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/sistemacomercial/icones/editarUse.png"))); // NOI18N
         jButton2.setToolTipText("Editar");
         jButton2.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
 
         jButton3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/sistemacomercial/icones/removerUser.png"))); // NOI18N
         jButton3.setToolTipText("Excluir");
@@ -281,6 +317,10 @@ public class TelaUsuario extends javax.swing.JInternalFrame {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         adicionar();
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        alterar();
+    }//GEN-LAST:event_jButton2ActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
