@@ -80,8 +80,8 @@ public class TelaUsuario extends javax.swing.JInternalFrame {
             JOptionPane.showMessageDialog(null, e);
         }
     }
-    
-    public void alterar(){
+
+    public void alterar() {
         String sql = "update tbusuarios set usuario = ?, fone = ?, login = ?, senha = ?, perfil = ? where iduser = ?";
         try {
             pst = conexao.prepareStatement(sql);
@@ -106,10 +106,33 @@ public class TelaUsuario extends javax.swing.JInternalFrame {
                     txtSenhaUsuario.setText(null);
                 }
             }
-            
+
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, e);
         }
+    }
+
+    public void remover() {
+        int confirma = JOptionPane.showConfirmDialog(null, "Deseja realmente remover este uruário?", "Atenção!", JOptionPane.YES_NO_OPTION);
+        if (confirma == JOptionPane.YES_OPTION) {
+            String sql = "delete from tbusuarios where iduser = ?";
+            try {
+                pst = conexao.prepareStatement(sql);
+                pst.setString(1, txtIdUsuario.getText());
+               int apagado = pst.executeUpdate();
+               if(apagado > 0){
+                   JOptionPane.showMessageDialog(null, "Removido com sucesso!");
+                    txtIdUsuario.setText(null);
+                    txtNomeUsuario.setText(null);
+                    txtFoneUsuario.setText(null);
+                    txtLoginUsuario.setText(null);
+                    txtSenhaUsuario.setText(null);
+               }
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(null, e);
+            }
+        }
+
     }
 
     /**
@@ -199,6 +222,11 @@ public class TelaUsuario extends javax.swing.JInternalFrame {
         jButton3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/sistemacomercial/icones/removerUser.png"))); // NOI18N
         jButton3.setToolTipText("Excluir");
         jButton3.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
 
         jButton4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/sistemacomercial/icones/searchUser.png"))); // NOI18N
         jButton4.setToolTipText("Pesquisar");
@@ -321,6 +349,10 @@ public class TelaUsuario extends javax.swing.JInternalFrame {
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         alterar();
     }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        remover();
+    }//GEN-LAST:event_jButton3ActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
