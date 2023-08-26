@@ -3,16 +3,18 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JInternalFrame.java to edit this template
  */
 package br.com.sistemacomercial.telas;
+
 import java.sql.*;
 import br.com.sistemacomercial.dal.ModuloConexao;
 import javax.swing.JOptionPane;
-
+import net.proteanit.sql.DbUtils;
 
 /**
  *
  * @author jade
  */
 public class TelaCliente extends javax.swing.JInternalFrame {
+
     Connection conexao = null;
     PreparedStatement pst = null;
     ResultSet rs = null;
@@ -24,7 +26,7 @@ public class TelaCliente extends javax.swing.JInternalFrame {
         initComponents();
         conexao = ModuloConexao.conector();
     }
-    
+
     private void adicionar() {
         String sql = "insert into tbclientes(nomecli, ruacli, numerocli, bairrocli, cidadecli, fonecli, emailcli) values (?, ?, ?, ?, ?, ?, ?)";
         try {
@@ -44,7 +46,7 @@ public class TelaCliente extends javax.swing.JInternalFrame {
                 int adicionado = pst.executeUpdate();
 
                 if (adicionado > 0) {
-                    JOptionPane.showMessageDialog(null, "Usuário cadastrado com sucesso!");
+                    JOptionPane.showMessageDialog(null, "Cliente cadastrado com sucesso!");
                     txtNomeCliente.setText(null);
                     txtRuaCli.setText(null);
                     txtNumeroCli.setText(null);
@@ -57,6 +59,64 @@ public class TelaCliente extends javax.swing.JInternalFrame {
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, e);
         }
+    }
+
+    public void alterar() {
+        String sql = "update tbclientes set nomecli = ?, ruacli = ?, numerocli = ?, bairrocli = ?, cidadecli = ?, fonecli = ?, emailcli = ?";
+        try {
+            pst = conexao.prepareStatement(sql);
+            pst.setString(1, txtNomeCliente.getText());
+            pst.setString(2, txtRuaCli.getText());
+            pst.setString(3, txtNumeroCli.getText());
+            pst.setString(4, txtBairroCli.getText());
+            pst.setString(5, txtCidadeCli.getText());
+            pst.setString(6, txtFoneCli.getText());
+            pst.setString(7, txtEmailCli.getText());
+
+            if ((txtNomeCliente.getText().isEmpty()) || (txtFoneCli.getText().isEmpty())) {
+                JOptionPane.showMessageDialog(null, "Preencha os campos obrigatorios");
+            } else {
+
+                int adicionado = pst.executeUpdate();
+
+                if (adicionado > 0) {
+                    JOptionPane.showMessageDialog(null, "Dados alterados com sucesso!");
+                    txtNomeCliente.setText(null);
+                    txtRuaCli.setText(null);
+                    txtNumeroCli.setText(null);
+                    txtBairroCli.setText(null);
+                    txtCidadeCli.setText(null);
+                    txtFoneCli.setText(null);
+                    txtEmailCli.setText(null);
+                }
+            }
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e);
+        }
+    }
+
+    private void pesquisar() {
+        String sql = "select * from tbclientes where nomecli like ?";
+        try {
+            pst = conexao.prepareStatement(sql);
+            pst.setString(1, txtPesquisarCli.getText() + "%");
+            rs = pst.executeQuery();
+            tblClientes.setModel(DbUtils.resultSetToTableModel(rs));
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e);
+        }
+    }
+
+    public void setarCampos() {
+        int setar = tblClientes.getSelectedRow();
+        txtNomeCliente.setText(tblClientes.getModel().getValueAt(setar, 1).toString());
+        txtRuaCli.setText(tblClientes.getModel().getValueAt(setar, 2).toString());
+        txtNumeroCli.setText(tblClientes.getModel().getValueAt(setar, 3).toString());
+        txtBairroCli.setText(tblClientes.getModel().getValueAt(setar, 4).toString());
+         txtCidadeCli.setText(tblClientes.getModel().getValueAt(setar, 5).toString());
+        txtFoneCli.setText(tblClientes.getModel().getValueAt(setar, 6).toString());
+        txtEmailCli.setText(tblClientes.getModel().getValueAt(setar, 7).toString());
     }
 
     /**
@@ -87,7 +147,7 @@ public class TelaCliente extends javax.swing.JInternalFrame {
         btnAlterar = new javax.swing.JButton();
         btnRemover = new javax.swing.JButton();
         txtPesquisarCli = new javax.swing.JTextField();
-        jLabel10 = new javax.swing.JLabel();
+        pesquisarCliente = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
         tblClientes = new javax.swing.JTable();
 
@@ -117,10 +177,26 @@ public class TelaCliente extends javax.swing.JInternalFrame {
         });
 
         btnAlterar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/sistemacomercial/icones/editarUse.png"))); // NOI18N
+        btnAlterar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAlterarActionPerformed(evt);
+            }
+        });
 
         btnRemover.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/sistemacomercial/icones/removerUser.png"))); // NOI18N
 
-        jLabel10.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/sistemacomercial/icones/searchUser.png"))); // NOI18N
+        txtPesquisarCli.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtPesquisarCliKeyReleased(evt);
+            }
+        });
+
+        pesquisarCliente.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/sistemacomercial/icones/searchUser.png"))); // NOI18N
+        pesquisarCliente.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                pesquisarClienteMouseClicked(evt);
+            }
+        });
 
         tblClientes.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -133,6 +209,11 @@ public class TelaCliente extends javax.swing.JInternalFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
+        tblClientes.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tblClientesMouseClicked(evt);
+            }
+        });
         jScrollPane2.setViewportView(tblClientes);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -154,7 +235,7 @@ public class TelaCliente extends javax.swing.JInternalFrame {
                             .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                                 .addComponent(txtPesquisarCli, javax.swing.GroupLayout.PREFERRED_SIZE, 207, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(pesquisarCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(jLabel1))
                             .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
@@ -194,7 +275,7 @@ public class TelaCliente extends javax.swing.JInternalFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(pesquisarCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(16, 16, 16)
                         .addComponent(jLabel1))
@@ -242,13 +323,28 @@ public class TelaCliente extends javax.swing.JInternalFrame {
         adicionar();
     }//GEN-LAST:event_btnAdicionarActionPerformed
 
+    private void pesquisarClienteMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pesquisarClienteMouseClicked
+        pesquisar();
+    }//GEN-LAST:event_pesquisarClienteMouseClicked
+
+    private void btnAlterarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAlterarActionPerformed
+        alterar();
+    }//GEN-LAST:event_btnAlterarActionPerformed
+
+    private void txtPesquisarCliKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtPesquisarCliKeyReleased
+        pesquisar();
+    }//GEN-LAST:event_txtPesquisarCliKeyReleased
+
+    private void tblClientesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblClientesMouseClicked
+        setarCampos();
+    }//GEN-LAST:event_tblClientesMouseClicked
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAdicionar;
     private javax.swing.JButton btnAlterar;
     private javax.swing.JButton btnRemover;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
@@ -257,6 +353,7 @@ public class TelaCliente extends javax.swing.JInternalFrame {
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JLabel pesquisarCliente;
     private javax.swing.JTable tblClientes;
     private javax.swing.JTextField txtBairroCli;
     private javax.swing.JTextField txtCidadeCli;
