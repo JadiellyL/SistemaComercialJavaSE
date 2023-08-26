@@ -90,6 +90,7 @@ public class TelaCliente extends javax.swing.JInternalFrame {
                     txtCidadeCli.setText(null);
                     txtFoneCli.setText(null);
                     txtEmailCli.setText(null);
+                    btnAdicionar.setEnabled(true);
                 }
             }
 
@@ -120,9 +121,10 @@ public class TelaCliente extends javax.swing.JInternalFrame {
         txtCidadeCli.setText(tblClientes.getModel().getValueAt(setar, 5).toString());
         txtFoneCli.setText(tblClientes.getModel().getValueAt(setar, 6).toString());
         txtEmailCli.setText(tblClientes.getModel().getValueAt(setar, 7).toString());
+        btnAdicionar.setEnabled(false);
      
     }
-    /**
+    
     public void remover() {
         int confirma = JOptionPane.showConfirmDialog(null, "Deseja realmente remover este cliente?", "Atenção!", JOptionPane.YES_NO_OPTION);
         if (confirma == JOptionPane.YES_OPTION) {
@@ -140,6 +142,7 @@ public class TelaCliente extends javax.swing.JInternalFrame {
                     txtCidadeCli.setText(null);
                     txtFoneCli.setText(null);
                     txtEmailCli.setText(null);
+                    btnAdicionar.setEnabled(true);
                }
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(null, e);
@@ -148,7 +151,7 @@ public class TelaCliente extends javax.swing.JInternalFrame {
         
 
     }
-    */
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -183,6 +186,9 @@ public class TelaCliente extends javax.swing.JInternalFrame {
         jLabel2 = new javax.swing.JLabel();
         txtIdCli = new javax.swing.JTextField();
 
+        setClosable(true);
+        setIconifiable(true);
+        setMaximizable(true);
         setPreferredSize(new java.awt.Dimension(537, 546));
 
         jLabel1.setText("*Campos obrigatórios");
@@ -388,7 +394,7 @@ public class TelaCliente extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_tblClientesMouseClicked
 
     private void btnRemoverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemoverActionPerformed
-        //remover();
+        remover();
     }//GEN-LAST:event_btnRemoverActionPerformed
 
 
