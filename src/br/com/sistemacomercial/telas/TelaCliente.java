@@ -56,7 +56,7 @@ public class TelaCliente extends javax.swing.JInternalFrame {
         }
     }
 
-    public void alterar() {
+    private void alterar() {
         String sql = "update tbclientes set nomecli = ?, ruacli = ?, numerocli = ?, bairrocli = ?, cidadecli = ?, fonecli = ?, emailcli = ? where idCliente = ?";
         try {
             pst = conexao.prepareStatement(sql);
@@ -99,7 +99,7 @@ public class TelaCliente extends javax.swing.JInternalFrame {
         }
     }
 
-    public void setarCampos() {
+    private void setarCampos() {
         int setar = tblClientes.getSelectedRow();
         txtIdCli.setText(tblClientes.getModel().getValueAt(setar, 0).toString());
         txtNomeCliente.setText(tblClientes.getModel().getValueAt(setar, 1).toString());
@@ -113,7 +113,7 @@ public class TelaCliente extends javax.swing.JInternalFrame {
 
     }
 
-    public void remover() {
+    private void remover() {
         int confirma = JOptionPane.showConfirmDialog(null, "Deseja realmente remover este cliente?", "Atenção!", JOptionPane.YES_NO_OPTION);
         if (confirma == JOptionPane.YES_OPTION) {
             String sql = "delete from tbclientes where idcliente = ?";

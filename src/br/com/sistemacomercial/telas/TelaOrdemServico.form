@@ -80,10 +80,7 @@
                       </Group>
                       <EmptySpace type="separate" max="32767" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Group type="102" attributes="0">
-                              <Component id="btnImprimir" min="-2" pref="82" max="-2" attributes="0"/>
-                              <EmptySpace max="32767" attributes="0"/>
-                          </Group>
+                          <Component id="btnImprimir" min="-2" pref="82" max="-2" attributes="0"/>
                           <Group type="102" attributes="0">
                               <Component id="btnAlterar" min="-2" pref="82" max="-2" attributes="0"/>
                               <EmptySpace max="32767" attributes="0"/>
@@ -343,6 +340,9 @@
       </Layout>
       <SubComponents>
         <Component class="javax.swing.JTextField" name="txtPesquisarCli">
+          <Events>
+            <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="txtPesquisarCliKeyReleased"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel1">
           <Properties>
@@ -375,6 +375,9 @@
                   </Table>
                 </Property>
               </Properties>
+              <Events>
+                <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="tblClientesMouseClicked"/>
+              </Events>
             </Component>
           </SubComponents>
         </Container>
