@@ -16,6 +16,8 @@ public class TelaOrdemServico extends javax.swing.JInternalFrame {
     Connection conexao = null;
     PreparedStatement pst = null;
     ResultSet rs = null;
+    
+    private String tipo;
     /**
      * Creates new form TelaOrdemServico
      */
@@ -40,7 +42,43 @@ public class TelaOrdemServico extends javax.swing.JInternalFrame {
         int setar = tblClientes.getSelectedRow();
         txtIdCli.setText(tblClientes.getModel().getValueAt(setar, 0).toString());
     }
-
+    
+    private void emitirOs(){
+        String sql = "insert into tbordservico(tipo, situacao, equipamento,defeito, servico,tecnico, valor, idcliente) values (?, ?, ?, ?, ?, ?, ?, ?)";
+        try {
+            pst = conexao.prepareStatement(sql);
+            pst.setString(1, tipo);
+            pst.setString(2, cboOsSt.getSelectedItem().toString());
+            pst.setString(3, txOsEquipamento.getText());
+            pst.setString(4, txtOsDefeito.getText());
+            pst.setString(5, txtOSServico.getText());
+            pst.setString(6, txtOsTecnico.getText());
+            pst.setString(7, txtOsValTotal.getText().replace(",", "."));
+            pst.setString(8, txtIdCli.getText());
+            if((txtIdCli.getText().isEmpty()) || (txOsEquipamento.getText().isEmpty()) || (txtOsDefeito.getText().isEmpty())){
+                JOptionPane.showMessageDialog(null, "Preencha os campos obrigatorios");
+            }else{
+                int adicionado = pst.executeUpdate();
+                if(adicionado > 0){
+                     JOptionPane.showMessageDialog(null, "Ordem de Serviço emitida com sucesso!");
+                     limpar();
+                }
+                
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e);
+        }
+    }
+    
+    private void limpar(){
+        txtIdCli.setText(null);
+        txOsEquipamento.setText(null);
+        txtOsDefeito.setText(null);
+        txtOSServico.setText(null);
+        txtOsTecnico.setText(null);
+        txtOsValTotal.setText(null);
+            
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -88,6 +126,23 @@ public class TelaOrdemServico extends javax.swing.JInternalFrame {
         setMaximizable(true);
         setTitle("Ordem de Serviço");
         setPreferredSize(new java.awt.Dimension(823, 546));
+        addInternalFrameListener(new javax.swing.event.InternalFrameListener() {
+            public void internalFrameActivated(javax.swing.event.InternalFrameEvent evt) {
+            }
+            public void internalFrameClosed(javax.swing.event.InternalFrameEvent evt) {
+            }
+            public void internalFrameClosing(javax.swing.event.InternalFrameEvent evt) {
+            }
+            public void internalFrameDeactivated(javax.swing.event.InternalFrameEvent evt) {
+            }
+            public void internalFrameDeiconified(javax.swing.event.InternalFrameEvent evt) {
+            }
+            public void internalFrameIconified(javax.swing.event.InternalFrameEvent evt) {
+            }
+            public void internalFrameOpened(javax.swing.event.InternalFrameEvent evt) {
+                formInternalFrameOpened(evt);
+            }
+        });
 
         jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
@@ -101,9 +156,19 @@ public class TelaOrdemServico extends javax.swing.JInternalFrame {
 
         buttonGroup1.add(rbtRc);
         rbtRc.setText("Orçamento");
+        rbtRc.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rbtRcActionPerformed(evt);
+            }
+        });
 
         buttonGroup1.add(rbtOs);
         rbtOs.setText("Ordem de Serviço");
+        rbtOs.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rbtOsActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -148,7 +213,7 @@ public class TelaOrdemServico extends javax.swing.JInternalFrame {
 
         jLabel4.setText("Situação");
 
-        cboOsSt.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Entrega Ok", "Orçamento Reprovado", "Aguardando Aprovação", "Aguardando Peças", "Abandonado pelo cliente", "Na bancada", "Retornou" }));
+        cboOsSt.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Na bancada", "Entrega Ok", "Orçamento Reprovado", "Aguardando Aprovação", "Aguardando Peças", "Abandonado pelo cliente", "Retornou" }));
 
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Cliente"));
 
@@ -226,8 +291,15 @@ public class TelaOrdemServico extends javax.swing.JInternalFrame {
 
         jLabel10.setText("Valor Total:");
 
+        txtOsValTotal.setText("0");
+
         btnAdicionar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/sistemacomercial/icones/addOs.png"))); // NOI18N
         btnAdicionar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnAdicionar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAdicionarActionPerformed(evt);
+            }
+        });
 
         btnAlterar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/sistemacomercial/icones/editarOS.png"))); // NOI18N
         btnAlterar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
@@ -349,6 +421,23 @@ public class TelaOrdemServico extends javax.swing.JInternalFrame {
     private void tblClientesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblClientesMouseClicked
         setarCampos();
     }//GEN-LAST:event_tblClientesMouseClicked
+
+    private void rbtRcActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rbtRcActionPerformed
+        tipo = "Orçamento";
+    }//GEN-LAST:event_rbtRcActionPerformed
+
+    private void rbtOsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rbtOsActionPerformed
+        tipo = "Ordem Serviço";
+    }//GEN-LAST:event_rbtOsActionPerformed
+
+    private void formInternalFrameOpened(javax.swing.event.InternalFrameEvent evt) {//GEN-FIRST:event_formInternalFrameOpened
+        rbtRc.setSelected(true);
+        tipo = "Orçamento";
+    }//GEN-LAST:event_formInternalFrameOpened
+
+    private void btnAdicionarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAdicionarActionPerformed
+        emitirOs();
+    }//GEN-LAST:event_btnAdicionarActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
