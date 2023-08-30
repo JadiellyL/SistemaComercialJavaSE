@@ -70,6 +70,43 @@ public class TelaOrdemServico extends javax.swing.JInternalFrame {
         }
     }
     
+    private void pesquisarOs(){
+        String num_os = JOptionPane.showInputDialog("Número da Ordem de Serviço");
+        String sql = "select * from tbordservico where idos="+num_os;
+        try {
+            pst = conexao.prepareStatement(sql);
+            rs = pst.executeQuery();
+            if (rs.next()) {
+                txtOs.setText(rs.getString(1));
+                txtData.setText(rs.getString(2));
+                String rtbTipo = rs.getString(3);
+                if (rtbTipo.equals("Ordem Serviço")) {
+                    rbtOs.setSelected(true);
+                    tipo = "Ordem Serviço";
+                } else {
+                    rbtRc.setSelected(true);
+                    tipo = "Orçamento";
+                }
+                cboOsSt.setSelectedItem(rs.getString(4));
+                txOsEquipamento.setText(rs.getString(5));
+                txtOsDefeito.setText(rs.getString(6));
+                txtOSServico.setText(rs.getString(7));
+                txtOsTecnico.setText(rs.getString(8));
+                txtOsValTotal.setText(rs.getString(9));
+                txtIdCli.setText(rs.getString(10));
+                btnAdicionar.setEnabled(false);
+                txtPesquisarCli.setEnabled(false);
+                tblClientes.setVisible(false);
+            } else {
+                JOptionPane.showMessageDialog(null, "Ordem de Serviço não cadastrada");
+            }
+        } catch (SQLSyntaxErrorException e) {
+            JOptionPane.showMessageDialog(null, "Ordem de Serviço inválida!");
+        }catch(Exception e){
+             JOptionPane.showMessageDialog(null, e);
+        }
+    }
+    
     private void limpar(){
         txtIdCli.setText(null);
         txOsEquipamento.setText(null);
@@ -178,9 +215,9 @@ public class TelaOrdemServico extends javax.swing.JInternalFrame {
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(txtOs, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(txtData, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(txtOs, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(txtData)
                         .addContainerGap())
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel2)
@@ -313,6 +350,11 @@ public class TelaOrdemServico extends javax.swing.JInternalFrame {
 
         btnPesquisar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/sistemacomercial/icones/searchUser.png"))); // NOI18N
         btnPesquisar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnPesquisar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnPesquisarActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -438,6 +480,10 @@ public class TelaOrdemServico extends javax.swing.JInternalFrame {
     private void btnAdicionarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAdicionarActionPerformed
         emitirOs();
     }//GEN-LAST:event_btnAdicionarActionPerformed
+
+    private void btnPesquisarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPesquisarActionPerformed
+        pesquisarOs();
+    }//GEN-LAST:event_btnPesquisarActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
