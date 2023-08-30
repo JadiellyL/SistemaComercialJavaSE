@@ -3,6 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JInternalFrame.java to edit this template
  */
 package br.com.sistemacomercial.telas;
+
 import java.sql.*;
 import br.com.sistemacomercial.dal.ModuloConexao;
 import javax.swing.JOptionPane;
@@ -13,11 +14,13 @@ import net.proteanit.sql.DbUtils;
  * @author jade
  */
 public class TelaOrdemServico extends javax.swing.JInternalFrame {
+
     Connection conexao = null;
     PreparedStatement pst = null;
     ResultSet rs = null;
-    
+
     private String tipo;
+
     /**
      * Creates new form TelaOrdemServico
      */
@@ -25,8 +28,8 @@ public class TelaOrdemServico extends javax.swing.JInternalFrame {
         initComponents();
         conexao = ModuloConexao.conector();
     }
-    
-    private void pesquisarCliente(){
+
+    private void pesquisarCliente() {
         String sql = "select idcliente as Id, nomecli as Nome, fonecli as Fone from tbclientes where nomecli like ?";
         try {
             pst = conexao.prepareStatement(sql);
@@ -37,13 +40,13 @@ public class TelaOrdemServico extends javax.swing.JInternalFrame {
             JOptionPane.showMessageDialog(null, e);
         }
     }
-    
-    private void setarCampos(){
+
+    private void setarCampos() {
         int setar = tblClientes.getSelectedRow();
         txtIdCli.setText(tblClientes.getModel().getValueAt(setar, 0).toString());
     }
-    
-    private void emitirOs(){
+
+    private void emitirOs() {
         String sql = "insert into tbordservico(tipo, situacao, equipamento,defeito, servico,tecnico, valor, idcliente) values (?, ?, ?, ?, ?, ?, ?, ?)";
         try {
             pst = conexao.prepareStatement(sql);
@@ -55,24 +58,24 @@ public class TelaOrdemServico extends javax.swing.JInternalFrame {
             pst.setString(6, txtOsTecnico.getText());
             pst.setString(7, txtOsValTotal.getText().replace(",", "."));
             pst.setString(8, txtIdCli.getText());
-            if((txtIdCli.getText().isEmpty()) || (txOsEquipamento.getText().isEmpty()) || (txtOsDefeito.getText().isEmpty())){
+            if ((txtIdCli.getText().isEmpty()) || (txOsEquipamento.getText().isEmpty()) || (txtOsDefeito.getText().isEmpty())) {
                 JOptionPane.showMessageDialog(null, "Preencha os campos obrigatorios");
-            }else{
+            } else {
                 int adicionado = pst.executeUpdate();
-                if(adicionado > 0){
-                     JOptionPane.showMessageDialog(null, "Ordem de Serviço emitida com sucesso!");
-                     limpar();
+                if (adicionado > 0) {
+                    JOptionPane.showMessageDialog(null, "Ordem de Serviço emitida com sucesso!");
+                    limpar();
                 }
-                
+
             }
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, e);
         }
     }
-    
-    private void pesquisarOs(){
+
+    private void pesquisarOs() {
         String num_os = JOptionPane.showInputDialog("Número da Ordem de Serviço");
-        String sql = "select * from tbordservico where idos="+num_os;
+        String sql = "select * from tbordservico where idos=" + num_os;
         try {
             pst = conexao.prepareStatement(sql);
             rs = pst.executeQuery();
@@ -102,20 +105,53 @@ public class TelaOrdemServico extends javax.swing.JInternalFrame {
             }
         } catch (SQLSyntaxErrorException e) {
             JOptionPane.showMessageDialog(null, "Ordem de Serviço inválida!");
-        }catch(Exception e){
-             JOptionPane.showMessageDialog(null, e);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e);
         }
     }
-    
-    private void limpar(){
+
+    private void alterarOs() {
+        String sql = "update tbordservico set tipo = ?, situacao = ?, equipamento = ?, defeito = ?, servico = ?, tecnico = ?, valor = ? where idos = ?";
+        try {
+            pst = conexao.prepareStatement(sql);
+            pst.setString(1, tipo);
+            pst.setString(2, cboOsSt.getSelectedItem().toString());
+            pst.setString(3, txOsEquipamento.getText());
+            pst.setString(4, txtOsDefeito.getText());
+            pst.setString(5, txtOSServico.getText());
+            pst.setString(6, txtOsTecnico.getText());
+            pst.setString(7, txtOsValTotal.getText().replace(",", "."));
+            pst.setString(8, txtOs.getText());
+            if ((txtIdCli.getText().isEmpty()) || (txOsEquipamento.getText().isEmpty()) || (txtOsDefeito.getText().isEmpty())) {
+                JOptionPane.showMessageDialog(null, "Preencha os campos obrigatorios");
+            } else {
+                int adicionado = pst.executeUpdate();
+                if (adicionado > 0) {
+                    JOptionPane.showMessageDialog(null, "Ordem de Serviço alterada com sucesso!");
+                    limpar();
+                    btnAdicionar.setEnabled(true);
+                    txtPesquisarCli.setEnabled(true);
+                    tblClientes.setVisible(true);
+                }
+
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e);
+        }
+    }
+
+    private void limpar() {
+        txtOs.setText(null);
+        txtData.setText(null);
         txtIdCli.setText(null);
         txOsEquipamento.setText(null);
         txtOsDefeito.setText(null);
         txtOSServico.setText(null);
         txtOsTecnico.setText(null);
         txtOsValTotal.setText(null);
-            
+
     }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -340,6 +376,11 @@ public class TelaOrdemServico extends javax.swing.JInternalFrame {
 
         btnAlterar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/sistemacomercial/icones/editarOS.png"))); // NOI18N
         btnAlterar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnAlterar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAlterarActionPerformed(evt);
+            }
+        });
 
         btnRemover.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/sistemacomercial/icones/removeros.png"))); // NOI18N
         btnRemover.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
@@ -484,6 +525,10 @@ public class TelaOrdemServico extends javax.swing.JInternalFrame {
     private void btnPesquisarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPesquisarActionPerformed
         pesquisarOs();
     }//GEN-LAST:event_btnPesquisarActionPerformed
+
+    private void btnAlterarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAlterarActionPerformed
+        alterarOs();
+    }//GEN-LAST:event_btnAlterarActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
