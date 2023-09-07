@@ -7,6 +7,7 @@ package br.com.sistemacomercial.telas;
 import java.sql.*;
 import br.com.sistemacomercial.dal.ModuloConexao;
 import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 import net.proteanit.sql.DbUtils;
 
 /**
@@ -58,13 +59,15 @@ public class TelaOrdemServico extends javax.swing.JInternalFrame {
             pst.setString(6, txtOsTecnico.getText());
             pst.setString(7, txtOsValTotal.getText().replace(",", "."));
             pst.setString(8, txtIdCli.getText());
-            if ((txtIdCli.getText().isEmpty()) || (txOsEquipamento.getText().isEmpty()) || (txtOsDefeito.getText().isEmpty())) {
+            if ((txtIdCli.getText().isEmpty()) || (txOsEquipamento.getText().isEmpty()) || (txtOsDefeito.getText().isEmpty()) || (cboOsSt.getSelectedItem().equals(" "))) {
                 JOptionPane.showMessageDialog(null, "Preencha os campos obrigatorios");
             } else {
                 int adicionado = pst.executeUpdate();
                 if (adicionado > 0) {
                     JOptionPane.showMessageDialog(null, "Ordem de Serviço emitida com sucesso!");
-                    limpar();
+                    btnAdicionar.setEnabled(false);
+                    btnPesquisar.setEnabled(false);
+                    btnImprimir.setEnabled(true);
                 }
 
             }
@@ -75,7 +78,7 @@ public class TelaOrdemServico extends javax.swing.JInternalFrame {
 
     private void pesquisarOs() {
         String num_os = JOptionPane.showInputDialog("Número da Ordem de Serviço");
-        String sql = "select * from tbordservico where idos=" + num_os;
+        String sql = "select idos, date_format(data_os, '%d/%m/%y - %H:%i'), tipo, situacao, equipamento, defeito, servico, tecnico, valor, idcliente from tbordservico where idos=" + num_os;
         try {
             pst = conexao.prepareStatement(sql);
             rs = pst.executeQuery();
@@ -98,8 +101,13 @@ public class TelaOrdemServico extends javax.swing.JInternalFrame {
                 txtOsValTotal.setText(rs.getString(9));
                 txtIdCli.setText(rs.getString(10));
                 btnAdicionar.setEnabled(false);
+                btnPesquisar.setEnabled(false);
                 txtPesquisarCli.setEnabled(false);
                 tblClientes.setVisible(false);
+                
+                btnAlterar.setEnabled(true);
+                btnRemover.setEnabled(true);
+                btnImprimir.setEnabled(true);
             } else {
                 JOptionPane.showMessageDialog(null, "Ordem de Serviço não cadastrada");
             }
@@ -122,7 +130,7 @@ public class TelaOrdemServico extends javax.swing.JInternalFrame {
             pst.setString(6, txtOsTecnico.getText());
             pst.setString(7, txtOsValTotal.getText().replace(",", "."));
             pst.setString(8, txtOs.getText());
-            if ((txtIdCli.getText().isEmpty()) || (txOsEquipamento.getText().isEmpty()) || (txtOsDefeito.getText().isEmpty())) {
+            if ((txtIdCli.getText().isEmpty()) || (txOsEquipamento.getText().isEmpty()) || (txtOsDefeito.getText().isEmpty()) || (cboOsSt.getSelectedItem().equals(" "))) {
                 JOptionPane.showMessageDialog(null, "Preencha os campos obrigatorios");
             } else {
                 int adicionado = pst.executeUpdate();
@@ -161,13 +169,24 @@ public class TelaOrdemServico extends javax.swing.JInternalFrame {
     private void limpar() {
         txtOs.setText(null);
         txtData.setText(null);
+        txtPesquisarCli.setText(null);
+        ((DefaultTableModel) tblClientes.getModel()).setRowCount(0);
+        cboOsSt.setSelectedItem(" ");
         txtIdCli.setText(null);
         txOsEquipamento.setText(null);
         txtOsDefeito.setText(null);
         txtOSServico.setText(null);
         txtOsTecnico.setText(null);
         txtOsValTotal.setText(null);
-
+        
+        btnAdicionar.setVisible(true);
+        btnPesquisar.setEnabled(true);
+        txtPesquisarCli.setVisible(true);
+        tblClientes.setVisible(true);
+        
+        btnAlterar.setEnabled(false);
+        btnRemover.setEnabled(false);
+        //btnImprimir.setEnabled(false);
     }
 
     /**
@@ -304,7 +323,7 @@ public class TelaOrdemServico extends javax.swing.JInternalFrame {
 
         jLabel4.setText("Situação");
 
-        cboOsSt.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Na bancada", "Entrega Ok", "Orçamento Reprovado", "Aguardando Aprovação", "Aguardando Peças", "Abandonado pelo cliente", "Retornou" }));
+        cboOsSt.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { " ", "Na bancada", "Entrega Ok", "Orçamento Reprovado", "Aguardando Aprovação", "Aguardando Peças", "Abandonado pelo cliente", "Retornou" }));
 
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Cliente"));
 
@@ -394,6 +413,7 @@ public class TelaOrdemServico extends javax.swing.JInternalFrame {
 
         btnAlterar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/sistemacomercial/icones/editarOS.png"))); // NOI18N
         btnAlterar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnAlterar.setEnabled(false);
         btnAlterar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnAlterarActionPerformed(evt);
@@ -402,6 +422,7 @@ public class TelaOrdemServico extends javax.swing.JInternalFrame {
 
         btnRemover.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/sistemacomercial/icones/removeros.png"))); // NOI18N
         btnRemover.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnRemover.setEnabled(false);
         btnRemover.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnRemoverActionPerformed(evt);
@@ -411,6 +432,7 @@ public class TelaOrdemServico extends javax.swing.JInternalFrame {
         btnImprimir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/sistemacomercial/icones/imprimirOs.png"))); // NOI18N
         btnImprimir.setToolTipText("Imprimir OS");
         btnImprimir.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnImprimir.setEnabled(false);
 
         btnPesquisar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/sistemacomercial/icones/searchUser.png"))); // NOI18N
         btnPesquisar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
